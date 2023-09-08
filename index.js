@@ -32,6 +32,7 @@ app.get('/get_gold_customers', function (req, res) {
       res.send(JSON.stringify(err));
     }else{
       let totalPerCustomer = new Map();
+      //console.log(result);
       
       result.forEach ( record => {
         
@@ -47,8 +48,8 @@ app.get('/get_gold_customers', function (req, res) {
       //console.log(totalPerCustomer);
       let arrayTotalPerCustomer = Array.from(totalPerCustomer.values());
       //console.log("arrayTotalPerCustomer",arrayTotalPerCustomer);
-      const GOLD_VALUE = 100;
-      let goldCustomers = arrayTotalPerCustomer.filter(el => el.value > GOLD_VALUE);	
+      const GOLD_VALUE = 130;
+      let goldCustomers = arrayTotalPerCustomer.filter(el => el.value >= GOLD_VALUE);	
       //CORS
       res.status(200);
       res.setHeader('Content-Type', 'application/json');
@@ -57,6 +58,48 @@ app.get('/get_gold_customers', function (req, res) {
       res.setHeader("Access-Control-Allow-Headers","X-PINGOTHER,Origin,X-Requested-With,Content-Type,Accept");
       res.setHeader("Access-Control-Max-Age","1728000");
       res.send(JSON.stringify(goldCustomers));
+      
+    }
+  });
+});
+
+//total per month_year
+//Gráfico de dispersão ou linhas: exiba por mês/ano, considerando todos os dados disponíveis no banco de dados, o total de vendas ocorridas naquele período.
+
+app.get('/payments_per_month_year', function (req, res) {
+  let sql =`SELECT customer_id,amount, year(payment_date) as year, month(payment_date) as month, amount FROM sakila.payment`;
+  con.query(sql, function (err, result) {
+    if (err){
+      res.status(500);
+      res.send(JSON.stringify(err));
+    }else{
+      let totalPerMonth = new Map();
+      //console.log(result);
+      
+      result.forEach ( record => {
+        let periodKey = record['year']+"_"+ record['month'];
+        if(totalPerMonth.get(periodKey) === undefined){
+          totalPerMonth.set(periodKey , {
+            value: record['amount'], 
+            year : record['year'],
+            month: record['month']
+          });
+        }else{
+          totalPerMonth.get(periodKey).value += record['amount'];
+        }
+     });
+      //console.log(totalPerCustomer);
+      let arrayTotalPerMonth = Array.from(totalPerMonth.values());
+ 
+      //CORS
+      res.status(200);
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods","POST,GET,OPTIONS,PUT,DELETE,HEAD");
+      res.setHeader("Access-Control-Allow-Headers","X-PINGOTHER,Origin,X-Requested-With,Content-Type,Accept");
+      res.setHeader("Access-Control-Max-Age","1728000");
+      res.send(JSON.stringify(arrayTotalPerMonth));
+      
     }
   });
 });

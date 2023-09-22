@@ -73,7 +73,7 @@ app.get('/payments_per_month_year', function (req, res) {
       res.status(500);
       res.send(JSON.stringify(err));
     }else{
-      let totalPerMonth = new Map();
+      let totalPerMonth = new Map()
       //console.log(result);
       
       result.forEach ( record => {
@@ -99,6 +99,46 @@ app.get('/payments_per_month_year', function (req, res) {
       res.setHeader("Access-Control-Allow-Headers","X-PINGOTHER,Origin,X-Requested-With,Content-Type,Accept");
       res.setHeader("Access-Control-Max-Age","1728000");
       res.send(JSON.stringify(arrayTotalPerMonth));
+      
+    }
+  });
+});
+
+app.get('/ratings_proportion', function (req, res) {
+  let sql =`SELECT film_id, rating  FROM sakila.film`;
+  con.query(sql, function (err, result) {
+    if (err){
+      res.status(500);
+      res.send(JSON.stringify(err));
+    }else{
+      let totalPerRating = new Map()
+      //console.log(result);
+      let totalElements = result.length;
+      result.forEach ( record => {
+        let ratingKey = record['rating'];
+        if(totalPerRating.get(ratingKey) === undefined){
+          totalPerRating.set(ratingKey , {
+            value: 1, 
+            rating: ratingKey,
+          });
+        }else{
+          totalPerRating.get(ratingKey).value++;
+        }
+     });
+      //console.log(totalPerCustomer);
+      let arrayTotalPerRating = Array.from(totalPerRating.values());
+      arrayTotalPerRating = arrayTotalPerRating.map( el => {
+        el.proportion = el.value/totalElements;
+        return el;
+      });
+      //CORS
+      res.status(200);
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods","POST,GET,OPTIONS,PUT,DELETE,HEAD");
+      res.setHeader("Access-Control-Allow-Headers","X-PINGOTHER,Origin,X-Requested-With,Content-Type,Accept");
+      res.setHeader("Access-Control-Max-Age","1728000");
+      res.send(JSON.stringify(arrayTotalPerRating));
       
     }
   });

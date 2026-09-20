@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <script>
+            function cadastrarEvento() {
+                console.log(window.event);
+                alert('Evento Cadastrado!');
+            }
+            function teclaPressionada() {
+                console.log("Tecla pressionada:", window.event);
+                var contador = document.getElementById('contador');
+                contador.innerHTML = document.getElementById('evento').value.length;
+            }
+            function scrollPagina() {
+                console.log("Scrolling...", window.event);
+            }
+        </script>
+    </head>
+    <body onscroll="scrollPagina()">
+        <h1>Programação Orientada a Eventos</h1>
+        <br /><br /><br />
+        <form>
+            <label for="evento">Nome do Evento:</label>
+            <input type="text" id="evento" name="evento" onkeyup="teclaPressionada()"><br><br>
+            Quantidade de caracteres: <div id="contador">0</div>
+            <label for="data">Data do Evento:</label>
+            <input type="date" id="data" name="data"><br><br>
+            <input type="button" value="Cadastrar Evento" onclick="cadastrarEvento()" onmouseover="console.log('Mouse sobre o botão', window.event)" onmouseout="console.log('Mouse fora do botão', window.event)">
+        </form>
+    </body>
+</html>

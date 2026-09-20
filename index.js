@@ -49,11 +49,13 @@ join customer c  on  c.customer_id = p.customer_id`;
         if(totalPerCustomer.get(record['customer_id']) === undefined){
           totalPerCustomer.set(record['customer_id'], {
             value: Number.parseFloat(record['amount']), 
-            customer:record['customer_id'],
-            customer_name:record['customer_name']
+            id:record['customer_id'],
+            customer_name:record['customer_name'],
+            qtdPagamentos: 1
           });
         }else{
           totalPerCustomer.get(record['customer_id']).value += Number.parseFloat(record['amount']);
+          totalPerCustomer.get(record['customer_id']).qtdPagamentos++;
         }
      });
       //console.log(totalPerCustomer);

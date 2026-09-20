@@ -108,6 +108,13 @@ components:
         customer_name:
           type: string
           example: João da Silva
+        value:
+          type: number
+          format: double
+          example: 123.45
+        qtdPagamentos:
+          type: integer
+          example: 5
 
     MediaMensal:
       type: object
